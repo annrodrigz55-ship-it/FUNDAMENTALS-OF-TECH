@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMS Simulation — English B2</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0d1b2a;
+  --blue: #1a4a8a;
+  --mid: #2563b0;
+  --light-blue: #e8f0fb;
+  --gold: #c8912a;
+  --gold-light: #fdf3e3;
+  --green: #15803d;
+  --green-light: #dcfce7;
+  --red: #991b1b;
+  --red-light: #fee2e2;
+  --gray: #f8fafc;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --muted: #64748b;
+  --white: #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #0d1b2a;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── INTRO SCREEN ─────────────────────────────── */
+.intro {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #0d1b2a 0%, #1a2d4a 100%);
+}
+
+.intro-tag {
+  display: inline-block;
+  background: rgba(200,145,42,0.15);
+  border: 1px solid rgba(200,145,42,0.4);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 6px 18px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+}
+
+.intro h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  color: white;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  max-width: 680px;
+}
+
+.intro h1 em { font-style: italic; color: var(--gold); }
+
+.intro p {
+  color: rgba(255,255,255,0.55);
+  font-size: 16px;
+  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+.lms-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 700px;
+  width: 100%;
+}
+
+.choice-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 32px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.choice-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.25);
+  transform: translateY(-4px);
+}
+
+.choice-icon { font-size: 40px; margin-bottom: 16px; display: block; }
+
+.choice-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.choice-card p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.choice-label {
+  display: inline-block;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+
+/* ── INSTRUCTOR KEY (hidden) ──────────────────── */
+.instructor-key {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 500;
+}
+
+.key-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.3);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.key-btn:hover {
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── REVEAL MODAL ─────────────────────────────── */
+.reveal-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.reveal-modal.show { display: flex; }
+
+.reveal-card {
+  background: var(--navy);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 36px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.reveal-card h3 {
+  font-family: 'Fraunces', serif;
+  color: white;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.reveal-card p {
+  color: rgba(255,255,255,0.55);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.reveal-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.reveal-btn {
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reveal-btn.bad-reveal {
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.reveal-btn.bad-reveal:hover { background: var(--red); color: white; }
+
+.reveal-btn.good-reveal {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.reveal-btn.good-reveal:hover { background: var(--green); color: white; }
+
+.reveal-close {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.reveal-close:hover { background: rgba(255,255,255,0.15); color: white; }
+
+/* ── LMS SHELL ────────────────────────────────── */
+.lms-shell {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.lms-shell.show { display: flex; }
+
+.lms-topnav {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+  background: var(--navy);
+}
+
+.lms-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lms-logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  background: var(--mid);
+}
+
+.lms-logo-name { font-size: 15px; font-weight: 700; color: white; }
+.lms-logo-course { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+
+.lms-topnav-right { display: flex; align-items: center; gap: 12px; }
+
+.back-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+.lms-body { display: flex; flex: 1; background: var(--gray); }
+
+.lms-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  background: white;
+}
+
+.sidebar-section { padding: 16px 0; border-bottom: 1px solid var(--border); }
+
+.sidebar-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 16px 8px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13.5px;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+
+.sidebar-item:hover { background: var(--light-blue); }
+.sidebar-item.active { background: var(--light-blue); font-weight: 600; border-left-color: var(--mid); color: var(--mid); }
+.sidebar-icon { font-size: 16px; flex-shrink: 0; }
+
+.sidebar-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  background: var(--light-blue);
+  color: var(--mid);
+}
+
+.lms-main { flex: 1; padding: 28px 32px; overflow-y: auto; }
+
+.content-panel { display: none; }
+.content-panel.active { display: block; }
+
+.page-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.alert {
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.alert-blue { background: var(--light-blue); border: 1px solid #bfdbfe; color: var(--blue); }
+.alert-gold { background: var(--gold-light); border: 1px solid #fde68a; color: #78350f; }
+.alert strong { display: block; font-weight: 700; margin-bottom: 4px; }
+
+/* Analysis alerts — hidden until revealed */
+.alert-red { background: #fff1f2; border: 1px solid #fecdd3; color: #881337; display: none; }
+.alert-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; display: none; }
+.alert-red.revealed { display: block; }
+.alert-green.revealed { display: block; }
+
+.module-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.module-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.module-header:hover { background: var(--gray); }
+
+.module-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+  color: white;
+  background: var(--mid);
+}
+
+.module-title { font-weight: 600; font-size: 15px; color: var(--text); }
+.module-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.module-chevron { margin-left: auto; color: var(--muted); transition: transform 0.3s; }
+.module-card.open .module-chevron { transform: rotate(180deg); }
+
+.module-items {
+  display: none;
+  padding: 0 20px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.module-card.open .module-items { display: block; }
+
+.module-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--text);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.module-item:last-child { border-bottom: none; }
+.module-item:hover { color: var(--mid); }
+.module-item-icon { font-size: 15px; }
+
+.item-tag {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tag-video { background: #dbeafe; color: #1d4ed8; }
+.tag-quiz { background: #fef3c7; color: #92400e; }
+.tag-forum { background: #d1fae5; color: #065f46; }
+.tag-task { background: #ffe4e6; color: #9f1239; }
+.tag-audio { background: #fce7f3; color: #9d174d; }
+
+.forum-post {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+.forum-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.forum-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.forum-meta { font-size: 12px; color: var(--muted); }
+.forum-author { font-weight: 600; font-size: 14px; color: var(--text); }
+.forum-body { font-size: 14px; line-height: 1.7; color: #374151; }
+
+.progress-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.progress-step::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.progress-step:last-child::after { display: none; }
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  border: 2px solid var(--border);
+  background: white;
+  color: var(--muted);
+}
+
+.step-circle.done { background: var(--green); border-color: var(--green); color: white; }
+.step-circle.current { background: var(--mid); border-color: var(--mid); color: white; }
+
+.step-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+  color: var(--mid);
+}
+
+.stat-label { font-size: 12px; color: var(--muted); }
+
+.file-list { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+
+.file-item:last-child { border-bottom: none; }
+.file-item-icon { font-size: 20px; }
+.file-item-name { color: var(--text); }
+.file-item-date { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+.cycle-visual {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.cycle-step { text-align: center; padding: 16px 12px; border-radius: 12px; }
+.cycle-step.before { background: var(--light-blue); }
+.cycle-step.during { background: var(--green-light); }
+.cycle-step.after { background: var(--gold-light); }
+.cycle-icon { font-size: 28px; margin-bottom: 8px; }
+.cycle-title { font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 4px; }
+.cycle-desc { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+.cycle-arrow { font-size: 20px; color: var(--muted); text-align: center; }
+
+.announcement {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.announcement-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.announcement-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.announcement-meta { font-size: 12px; color: var(--muted); }
+.announcement-from { font-weight: 600; font-size: 14px; color: var(--text); }
+.announcement-body { font-size: 14px; line-height: 1.7; color: #374151; }
+
+.rubric {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.rubric th { background: var(--navy); color: white; padding: 12px 16px; text-align: left; font-weight: 600; }
+.rubric td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+.rubric tr:last-child td { border-bottom: none; }
+.rubric tr:nth-child(even) td { background: var(--gray); }
+
+/* Analysis modal */
+.analysis-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 400;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.analysis-modal.show { display: flex; }
+
+.modal-card {
+  background: white;
+  border-radius: 20px;
+  padding: 36px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-card h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  color: var(--navy);
+  margin-bottom: 20px;
+}
+
+.analysis-point {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.analysis-point:last-of-type { border-bottom: none; }
+.analysis-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.analysis-point-body h4 { font-weight: 700; font-size: 14px; color: var(--navy); margin-bottom: 4px; }
+.analysis-point-body p { font-size: 13px; color: #4b5563; line-height: 1.6; }
+
+.modal-close {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background: var(--navy);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-close:hover { background: var(--mid); }
+
+@media (max-width: 768px) {
+  .lms-choice { grid-template-columns: 1fr; }
+  .lms-sidebar { display: none; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .cycle-visual { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- INTRO -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="intro" id="introScreen">
+  <div class="intro-tag">Fundamentals of Digital Technologies · LMS Simulation</div>
+  <h1>Explore Two<br><em>Digital Environments</em></h1>
+  <p>Both are English B2 courses on the same platform. Navigate freely and think: in which one would you actually learn more?</p>
+  <div class="lms-choice">
+    <div class="choice-card" onclick="openLMS('bad')">
+      <span class="choice-label">LMS A</span>
+      <span class="choice-icon">🖥</span>
+      <h3>English B2 — Online Resources</h3>
+      <p>Materials, videos, and resources available for the course.</p>
+    </div>
+    <div class="choice-card" onclick="openLMS('good')">
+      <span class="choice-label">LMS B</span>
+      <span class="choice-icon">🖥</span>
+      <h3>English B2 — Course Platform</h3>
+      <p>Weekly modules, activities, and interaction spaces for this course.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- LMS A -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="lms-shell" id="lmsBad">
+  <nav class="lms-topnav">
+    <div class="lms-logo">
+      <div class="lms-logo-icon">E</div>
+      <div>
+        <div class="lms-logo-name">EduPlatform</div>
+        <div class="lms-logo-course">English B2 — Online Resources</div>
+      </div>
+    </div>
+    <div class="lms-topnav-right">
+      <button class="back-btn" onclick="goBack()">← Back to selection</button>
+    </div>
+  </nav>
+
+  <div class="lms-body">
+    <aside class="lms-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Navigation</div>
+        <div class="sidebar-item active" onclick="showPanel('bad','home',this)"><span class="sidebar-icon">🏠</span> Home</div>
+        <div class="sidebar-item" onclick="showPanel('bad','files',this)"><span class="sidebar-icon">📁</span> Course Files <span class="sidebar-badge">47</span></div>
+        <div class="sidebar-item" onclick="showPanel('bad','videos',this)"><span class="sidebar-icon">🎥</span> Videos</div>
+        <div class="sidebar-item" onclick="showPanel('bad','forum',this)"><span class="sidebar-icon">💬</span> Discussion Forum</div>
+        <div class="sidebar-item" onclick="showPanel('bad','grades',this)"><span class="sidebar-icon">📊</span> Grades</div>
+      </div>
+    </aside>
+
+    <main class="lms-main">
+
+      <div class="content-panel active" id="bad-home">
+        <h1 class="page-title">Welcome to English B2</h1>
+        <p class="page-subtitle">All course materials are available below. Check the files section for your resources.</p>
+        <div class="announcement">
+          <div class="announcement-header">
+            <div class="announcement-avatar">T</div>
+            <div>
+              <div class="announcement-from">Teacher · Announcement</div>
+              <div class="announcement-meta">Posted 3 weeks ago</div>
+            </div>
+          </div>
+          <div class="announcement-body">Hi everyone. I've uploaded all the PDFs and videos for the semester. Please download what you need. The Zoom link for our weekly class is: zoom.us/j/84729102. See you there!</div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-number">47</div><div class="stat-label">Files uploaded</div></div>
+          <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">Announcement this semester</div></div>
+          <div class="stat-card"><div class="stat-number">0</div><div class="stat-label">Discussion prompts</div></div>
+        </div>
+        <div class="alert alert-red revealed" id="bad-home-alert">
+          <strong>⚠ What to notice:</strong>
+          No structure, no week-by-week progression, no instructions on what to do before or after class, and no connection between online materials and the live session.
+        </div>
+      </div>
+
+      <div class="content-panel" id="bad-files">
+        <h1 class="page-title">Course Files</h1>
+        <p class="page-subtitle">All materials for the semester. 47 items.</p>
+        <div class="alert alert-red revealed" id="bad-files-alert">
+          <strong>⚠ No organization, no sequence, no purpose labels.</strong> Students must figure out what to open, when, and why — on their own.
+        </div>
+        <div class="file-list">
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">grammar_exercises_unit1.pdf</span><span class="file-item-date">Sep 3</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">reading_text_business_english.pdf</span><span class="file-item-date">Sep 3</span></div>
+          <div class="file-item"><span class="file-item-icon">🎥</span><span class="file-item-name">video_lesson_conditionals.mp4</span><span class="file-item-date">Sep 10</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">unit2_vocabulary_list.pdf</span><span class="file-item-date">Sep 10</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">FINAL_grammar_exercises_unit1_v2.pdf</span><span class="file-item-date">Sep 12</span></div>
+          <div class="file-item"><span class="file-item-icon">🎥</span><span class="file-item-name">zoom_recording_week3.mp4</span><span class="file-item-date">Sep 17</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">extra_practice_conditionals.pdf</span><span class="file-item-date">Sep 18</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">reading_comprehension_week4.pdf</span><span class="file-item-date">Sep 24</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">UPDATED_vocabulary_unit2_FINAL.pdf</span><span class="file-item-date">Sep 25</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">writing_tips_general.pdf</span><span class="file-item-date">Oct 1</span></div>
+          <div class="file-item"><span class="file-item-icon">🎥</span><span class="file-item-name">video_passive_voice_explanation.mp4</span><span class="file-item-date">Oct 8</span></div>
+          <div class="file-item"><span class="file-item-icon">📄</span><span class="file-item-name">misc_notes_class.pdf</span><span class="file-item-date">Oct 9</span></div>
+          <div class="file-item" style="background:#f9fafb;"><span class="file-item-icon">⋯</span><span class="file-item-name" style="color:var(--muted);">+ 35 more files...</span><span class="file-item-date">various dates</span></div>
+        </div>
+      </div>
+
+      <div class="content-panel" id="bad-videos">
+        <h1 class="page-title">Videos</h1>
+        <p class="page-subtitle">Grammar explanation videos.</p>
+        <div class="alert alert-red revealed" id="bad-videos-alert"><strong>⚠ No instructions on when to watch or what to do after.</strong> Videos are uploaded but there is no guidance on how they connect to the live session.</div>
+        <div class="module-card"><div class="module-header"><div class="module-num">▶</div><div><div class="module-title">Conditionals — Grammar Explanation</div><div class="module-meta">Duration: 18 min · No description</div></div><span class="module-chevron">▾</span></div></div>
+        <div class="module-card"><div class="module-header"><div class="module-num">▶</div><div><div class="module-title">Passive Voice — Full Explanation</div><div class="module-meta">Duration: 22 min · No description</div></div><span class="module-chevron">▾</span></div></div>
+        <div class="module-card"><div class="module-header"><div class="module-num">▶</div><div><div class="module-title">Zoom Recording — Week 3 Class</div><div class="module-meta">Duration: 1h 42min · No description</div></div><span class="module-chevron">▾</span></div></div>
+      </div>
+
+      <div class="content-panel" id="bad-forum">
+        <h1 class="page-title">Discussion Forum</h1>
+        <p class="page-subtitle">General forum.</p>
+        <div class="alert alert-red revealed" id="bad-forum-alert"><strong>⚠ No discussion prompt, no teacher guidance.</strong> Students use the forum to ask logistical questions — not to learn.</div>
+        <div class="forum-post">
+          <div class="forum-post-header"><div class="forum-avatar" style="background:#6b7280;">S</div><div><div class="forum-author">Student A</div><div class="forum-meta">Posted 2 weeks ago</div></div></div>
+          <div class="forum-body">Hi, is the assignment due this Friday or next Friday? I'm confused about the deadline.</div>
+        </div>
+        <div class="forum-post">
+          <div class="forum-post-header"><div class="forum-avatar" style="background:#6b7280;">M</div><div><div class="forum-author">Student B</div><div class="forum-meta">Posted 2 weeks ago</div></div></div>
+          <div class="forum-body">I think next Friday? Not sure either. Professor hasn't responded yet.</div>
+        </div>
+        <div class="forum-post">
+          <div class="forum-post-header"><div class="forum-avatar" style="background:#6b7280;">R</div><div><div class="forum-author">Student C</div><div class="forum-meta">Posted 1 week ago</div></div></div>
+          <div class="forum-body">Does anyone know what pages we need to read? There are so many files I don't know which one to open.</div>
+        </div>
+      </div>
+
+      <div class="content-panel" id="bad-grades">
+        <h1 class="page-title">Grades</h1>
+        <p class="page-subtitle">Your current grades.</p>
+        <div class="alert alert-red revealed" id="bad-grades-alert"><strong>⚠ No rubrics, no criteria, no feedback.</strong> Students receive a number but don't know what to improve.</div>
+        <table class="rubric" style="width:100%">
+          <tr><th>Assignment</th><th>Score</th><th>Feedback</th></tr>
+          <tr><td>Unit 1 Exercises</td><td>7/10</td><td style="color:var(--muted);font-style:italic">No feedback provided</td></tr>
+          <tr><td>Reading Comprehension</td><td>8/10</td><td style="color:var(--muted);font-style:italic">No feedback provided</td></tr>
+          <tr><td>Writing Task 1</td><td>6/10</td><td style="color:var(--muted);font-style:italic">No feedback provided</td></tr>
+          <tr><td>Midterm</td><td>—</td><td style="color:var(--muted);">Not graded yet</td></tr>
+        </table>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- LMS B -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="lms-shell" id="lmsGood">
+  <nav class="lms-topnav">
+    <div class="lms-logo">
+      <div class="lms-logo-icon">E</div>
+      <div>
+        <div class="lms-logo-name">EduPlatform</div>
+        <div class="lms-logo-course">English B2 — Course Platform</div>
+      </div>
+    </div>
+    <div class="lms-topnav-right">
+      <button class="back-btn" onclick="goBack()">← Back to selection</button>
+    </div>
+  </nav>
+
+  <div class="lms-body">
+    <aside class="lms-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Navigation</div>
+        <div class="sidebar-item active" onclick="showPanel('good','home',this)"><span class="sidebar-icon">🏠</span> Home</div>
+        <div class="sidebar-item" onclick="showPanel('good','modules',this)"><span class="sidebar-icon">📚</span> Weekly Modules</div>
+        <div class="sidebar-item" onclick="showPanel('good','forum',this)"><span class="sidebar-icon">💬</span> Discussion Forum <span class="sidebar-badge">New</span></div>
+        <div class="sidebar-item" onclick="showPanel('good','feedback',this)"><span class="sidebar-icon">📝</span> My Feedback</div>
+        <div class="sidebar-item" onclick="showPanel('good','rubric',this)"><span class="sidebar-icon">📊</span> Assessment Rubric</div>
+      </div>
+    </aside>
+
+    <main class="lms-main">
+
+      <div class="content-panel active" id="good-home">
+        <h1 class="page-title">Welcome back, Valeria 👋</h1>
+        <p class="page-subtitle">You are in <strong>Week 4: Expressing Opinions in Academic English</strong>. Here is what to do before Thursday's live session.</p>
+        <div class="cycle-visual">
+          <div class="cycle-step before"><div class="cycle-icon">📖</div><div class="cycle-title">Before Class</div><div class="cycle-desc">Watch video + complete LMS vocabulary task</div></div>
+          <div class="cycle-arrow">→</div>
+          <div class="cycle-step during"><div class="cycle-icon">🎙</div><div class="cycle-title">Live Session</div><div class="cycle-desc">Practice expressing opinions in breakout rooms</div></div>
+          <div class="cycle-arrow">→</div>
+          <div class="cycle-step after"><div class="cycle-icon">🎧</div><div class="cycle-title">After Class</div><div class="cycle-desc">Record 90-second audio response + post in forum</div></div>
+        </div>
+        <div class="announcement">
+          <div class="announcement-header">
+            <div class="announcement-avatar">AR</div>
+            <div><div class="announcement-from">Andrea Rodríguez, MGS. · Instructor</div><div class="announcement-meta">Posted 2 days ago · Week 4 Update</div></div>
+          </div>
+          <div class="announcement-body">Hi everyone! Before Thursday, please watch the short video on expressing opinions (12 min) and complete the vocabulary matching activity below. During class we will go straight into practice — no repetition of the video content. After class, record your 90-second response to the forum prompt. I will give individual audio feedback by Monday. 🎯</div>
+        </div>
+        <div class="alert alert-green revealed" id="good-home-alert">
+          <strong>✓ What to notice:</strong>
+          The home page tells students exactly what to do, when, and why. There is a clear Before → During → After learning cycle. The instructor communicates regularly and with purpose.
+        </div>
+      </div>
+
+      <div class="content-panel" id="good-modules">
+        <h1 class="page-title">Weekly Modules</h1>
+        <p class="page-subtitle">Each week follows a connected Before → During → After learning cycle.</p>
+        <div class="progress-track">
+          <div class="progress-step"><div class="step-circle done">✓</div><div class="step-label">Week 1</div></div>
+          <div class="progress-step"><div class="step-circle done">✓</div><div class="step-label">Week 2</div></div>
+          <div class="progress-step"><div class="step-circle done">✓</div><div class="step-label">Week 3</div></div>
+          <div class="progress-step"><div class="step-circle current">4</div><div class="step-label">Week 4 ← Now</div></div>
+          <div class="progress-step"><div class="step-circle">5</div><div class="step-label">Week 5</div></div>
+        </div>
+        <div class="module-card open" id="mod4">
+          <div class="module-header" onclick="toggleModule('mod4')">
+            <div class="module-num">4</div>
+            <div><div class="module-title">Week 4 — Expressing Opinions in Academic English</div><div class="module-meta">4 tasks · Due Thursday before class</div></div>
+            <span class="module-chevron">▾</span>
+          </div>
+          <div class="module-items">
+            <div class="module-item"><span class="module-item-icon">🎥</span> Video: How to express and justify opinions in English (12 min) <span class="item-tag tag-video">Video</span></div>
+            <div class="module-item"><span class="module-item-icon">✏️</span> Before-class task: Vocabulary matching — opinion phrases <span class="item-tag tag-quiz">Quiz</span></div>
+            <div class="module-item"><span class="module-item-icon">🎙</span> After-class: Record your opinion on the week's topic (90 sec) <span class="item-tag tag-audio">Audio</span></div>
+            <div class="module-item"><span class="module-item-icon">💬</span> Forum: Respond to a classmate's recording <span class="item-tag tag-forum">Forum</span></div>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-header" onclick="toggleModule('mod3')">
+            <div class="module-num">3</div>
+            <div><div class="module-title">Week 3 — Writing with Clarity: Cohesion and Coherence</div><div class="module-meta">4 tasks · Completed ✓</div></div>
+            <span class="module-chevron">▾</span>
+          </div>
+          <div class="module-items" id="mod3">
+            <div class="module-item"><span class="module-item-icon">🎥</span> Video: Cohesion devices in academic writing (10 min) <span class="item-tag tag-video">Video</span></div>
+            <div class="module-item"><span class="module-item-icon">✏️</span> Before-class task: Identify cohesion in a text sample <span class="item-tag tag-quiz">Quiz</span></div>
+            <div class="module-item"><span class="module-item-icon">📄</span> AI writing exercise: Use ChatGPT prompt to draft a paragraph <span class="item-tag tag-task">Task</span></div>
+            <div class="module-item"><span class="module-item-icon">🎧</span> ElevenLabs: Listen to your paragraph and revise <span class="item-tag tag-audio">Audio</span></div>
+          </div>
+        </div>
+        <div class="alert alert-green revealed" id="good-modules-alert">
+          <strong>✓ What to notice:</strong>
+          Each module has a clear sequence. Students know exactly what to do before, during, and after class. Every task connects to the next one.
+        </div>
+      </div>
+
+      <div class="content-panel" id="good-forum">
+        <h1 class="page-title">Discussion Forum</h1>
+        <p class="page-subtitle">Week 4 — After listening to your classmates' recordings, respond to at least one person with a question or a reaction in English.</p>
+        <div class="alert alert-blue">
+          <strong>💬 Week 4 Prompt from Andrea Rodríguez:</strong>
+          Record a 90-second audio sharing your opinion: <em>"Should artificial intelligence replace language teachers in the future?"</em> Use at least 3 opinion phrases from this week's vocabulary. Post your audio, then respond to one classmate.
+        </div>
+        <div class="forum-post">
+          <div class="forum-post-header"><div class="forum-avatar" style="background:#7c3aed;">K</div><div><div class="forum-author">Katherine I.</div><div class="forum-meta">Posted yesterday · 🎧 Audio: 1:28</div></div></div>
+          <div class="forum-body">I strongly believe that AI cannot fully replace teachers because language learning involves human connection and empathy — things that no algorithm can replicate. In my experience teaching at university... [audio attached]</div>
+        </div>
+        <div class="forum-post">
+          <div class="forum-post-header"><div class="forum-avatar" style="background:#0891b2;">F</div><div><div class="forum-author">Fernando G.</div><div class="forum-meta">Posted yesterday · 🎧 Audio: 1:31</div></div></div>
+          <div class="forum-body">From my point of view, AI is a powerful tool but not a replacement. What I find most interesting is the idea that AI can personalize learning in ways a single teacher simply cannot... [audio attached]</div>
+        </div>
+        <div class="forum-post" style="background:#f0fdf4; border-color:#bbf7d0;">
+          <div class="forum-post-header"><div class="forum-avatar" style="background:#059669;">AR</div><div><div class="forum-author">Andrea Rodríguez · Instructor</div><div class="forum-meta">Posted this morning · Individual feedback</div></div></div>
+          <div class="forum-body">Katherine — excellent use of cohesion devices! I noticed you said "things that no algorithm can replicate" — very sophisticated. For next time, try adding a specific example from your teaching experience to strengthen the argument. 🎙</div>
+        </div>
+        <div class="alert alert-green revealed" id="good-forum-alert">
+          <strong>✓ What to notice:</strong>
+          The forum has a clear prompt that requires language production. Students interact with each other. The instructor gives specific, targeted feedback — not just a grade.
+        </div>
+      </div>
+
+      <div class="content-panel" id="good-feedback">
+        <h1 class="page-title">My Feedback</h1>
+        <p class="page-subtitle">Individual feedback from your instructor.</p>
+        <div class="announcement">
+          <div class="announcement-header"><div class="announcement-avatar">AR</div><div><div class="announcement-from">Week 3 Writing Task</div><div class="announcement-meta">Feedback received Monday</div></div></div>
+          <div class="announcement-body">
+            <strong>Score: 8.5/10</strong><br><br>
+            <strong>What worked well:</strong> Your paragraph had a clear central argument and good use of cohesion devices. The ElevenLabs revision clearly helped — I can see you changed sentence rhythm.<br><br>
+            <strong>Area to develop:</strong> Your conclusion could be stronger. Instead of summarizing, try to open a new question or implication.<br><br>
+            <strong>Next step:</strong> In Week 4, try applying this to spoken language — express and justify a complex opinion in your audio recording.
+          </div>
+        </div>
+        <div class="alert alert-green revealed" id="good-feedback-alert">
+          <strong>✓ What to notice:</strong>
+          Feedback is specific, actionable, and connected to the next task. Students know exactly what to work on — and how it connects to what comes next.
+        </div>
+      </div>
+
+      <div class="content-panel" id="good-rubric">
+        <h1 class="page-title">Assessment Rubric</h1>
+        <p class="page-subtitle">How your work is evaluated this week — shared at the start of every module.</p>
+        <table class="rubric">
+          <tr><th>Criterion</th><th>Excellent (9–10)</th><th>Good (7–8)</th><th>Needs work (5–6)</th></tr>
+          <tr><td><strong>Opinion clarity</strong></td><td>Position is clear, specific, and consistently maintained</td><td>Position is clear but not always supported</td><td>Position is vague or shifts</td></tr>
+          <tr><td><strong>Vocabulary use</strong></td><td>Uses 4+ opinion phrases naturally</td><td>Uses 2–3 phrases correctly</td><td>Uses fewer than 2 or incorrectly</td></tr>
+          <tr><td><strong>Interaction</strong></td><td>Response adds a new idea or question</td><td>Response is relevant but surface-level</td><td>Response is minimal</td></tr>
+          <tr><td><strong>Language accuracy</strong></td><td>Minor errors that don't affect communication</td><td>Some errors but meaning is clear</td><td>Errors affect understanding</td></tr>
+        </table>
+        <div class="alert alert-green revealed" id="good-rubric-alert">
+          <strong>✓ What to notice:</strong>
+          Students know the criteria before they start. Assessment is transparent and connected to the learning objectives of the week.
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- INSTRUCTOR KEY BUTTON (subtle, bottom right) -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="instructor-key" id="instructorKey" style="display:none;">
+  <button class="key-btn" onclick="showRevealModal()" title="Instructor: Reveal analysis">🔑</button>
+</div>
+
+<!-- REVEAL MODAL -->
+<div class="reveal-modal" id="revealModal">
+  <div class="reveal-card">
+    <h3>Reveal Analysis</h3>
+    <p>Choose which LMS analysis to show to the class. This will highlight the key observations inside each environment.</p>
+    <div class="reveal-buttons">
+      <button class="reveal-btn bad-reveal" onclick="revealAnalysis('bad')">⚠ Reveal LMS A analysis</button>
+      <button class="reveal-btn good-reveal" onclick="revealAnalysis('good')">✓ Reveal LMS B analysis</button>
+    </div>
+    <button class="reveal-close" onclick="closeRevealModal()">Close</button>
+  </div>
+</div>
+
+<!-- ANALYSIS MODALS -->
+<div class="analysis-modal" id="modal-bad">
+  <div class="modal-card">
+    <h2>⚠ LMS A — What Goes Wrong</h2>
+    <div class="analysis-point">
+      <div class="analysis-icon">📁</div>
+      <div class="analysis-point-body"><h4>47 files with no structure</h4><p>Content is uploaded without sequence, labels, or purpose. Students cannot tell what is essential, what is optional, or what order to follow. This creates cognitive overload before learning even begins.</p></div>
+    </div>
+    <div class="analysis-point">
+      <div class="analysis-icon">🔗</div>
+      <div class="analysis-point-body"><h4>No connection between online and live moments</h4><p>The LMS and the Zoom class are parallel, not connected. Students consume online content and attend class — but neither moment builds on the other. This is not blended learning.</p></div>
+    </div>
+    <div class="analysis-point">
+      <div class="analysis-icon">💬</div>
+      <div class="analysis-point-body"><h4>The forum is used for logistics, not learning</h4><p>Students use the discussion forum to ask about deadlines and find missing files — not to discuss ideas or practice language.</p></div>
+    </div>
+    <div class="analysis-point">
+      <div class="analysis-icon">📊</div>
+      <div class="analysis-point-body"><h4>Grades without feedback</h4><p>Students receive scores but no explanation of what they did well or what to improve. Assessment becomes a label, not a learning tool.</p></div>
+    </div>
+    <button class="modal-close" onclick="closeModal('bad')">Close</button>
+  </div>
+</div>
+
+<div class="analysis-modal" id="modal-good">
+  <div class="modal-card">
+    <h2>✓ LMS B — What Works and Why</h2>
+    <div class="analysis-point">
+      <div class="analysis-icon">🔁</div>
+      <div class="analysis-point-body"><h4>Clear Before → During → After learning cycle</h4><p>Every week has three connected moments. The video prepares students for the live session; the live session applies what they prepared; the audio recording extends learning after class. Nothing is disconnected or repeated.</p></div>
+    </div>
+    <div class="analysis-point">
+      <div class="analysis-icon">🎯</div>
+      <div class="analysis-point-body"><h4>The home page is a compass, not a folder</h4><p>Students know exactly where they are, what to do next, and why. The instructor communicates regularly with specific, purposeful announcements.</p></div>
+    </div>
+    <div class="analysis-point">
+      <div class="analysis-icon">💬</div>
+      <div class="analysis-point-body"><h4>The forum generates real interaction and language use</h4><p>The discussion prompt requires students to produce language, express a position, and respond meaningfully to a classmate. The instructor participates with targeted feedback.</p></div>
+    </div>
+    <div class="analysis-point">
+      <div class="analysis-icon">📝</div>
+      <div class="analysis-point-body"><h4>Feedback is specific, timely, and feed-forward</h4><p>Every piece of feedback tells students what worked, what to improve, and how that connects to the next task. Assessment becomes part of the learning design.</p></div>
+    </div>
+    <button class="modal-close" onclick="closeModal('good')">Close</button>
+  </div>
+</div>
+
+<script>
+  let analysisRevealed = { bad: false, good: false };
+
+  function openLMS(type) {
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById(type === 'bad' ? 'lmsBad' : 'lmsGood').classList.add('show');
+    document.getElementById('instructorKey').style.display = 'block';
+
+    // Hide analysis alerts if not yet revealed
+    if (!analysisRevealed[type]) {
+      hideAlerts(type);
+    }
+  }
+
+  function hideAlerts(type) {
+    const shell = document.getElementById(type === 'bad' ? 'lmsBad' : 'lmsGood');
+    shell.querySelectorAll('.alert-red, .alert-green').forEach(a => {
+      a.classList.remove('revealed');
+    });
+  }
+
+  function goBack() {
+    document.getElementById('lmsBad').classList.remove('show');
+    document.getElementById('lmsGood').classList.remove('show');
+    document.getElementById('introScreen').style.display = 'flex';
+    document.getElementById('instructorKey').style.display = 'none';
+  }
+
+  function showPanel(lms, panel, el) {
+    const shell = document.getElementById(lms === 'bad' ? 'lmsBad' : 'lmsGood');
+    shell.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+    shell.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.getElementById(`${lms}-${panel}`).classList.add('active');
+    el.classList.add('active');
+  }
+
+  function toggleModule(id) {
+    document.getElementById(id).closest('.module-card').classList.toggle('open');
+  }
+
+  function showRevealModal() {
+    document.getElementById('revealModal').classList.add('show');
+  }
+
+  function closeRevealModal() {
+    document.getElementById('revealModal').classList.remove('show');
+  }
+
+  function revealAnalysis(type) {
+    closeRevealModal();
+    analysisRevealed[type] = true;
+
+    // Show all alerts for this LMS
+    const shell = document.getElementById(type === 'bad' ? 'lmsBad' : 'lmsGood');
+    if (type === 'bad') {
+      shell.querySelectorAll('.alert-red').forEach(a => a.classList.add('revealed'));
+    } else {
+      shell.querySelectorAll('.alert-green').forEach(a => a.classList.add('revealed'));
+    }
+
+    // Open the full analysis modal
+    document.getElementById(`modal-${type}`).classList.add('show');
+  }
+
+  function closeModal(type) {
+    document.getElementById(`modal-${type}`).classList.remove('show');
+  }
+</script>
+</body>
+</html>
